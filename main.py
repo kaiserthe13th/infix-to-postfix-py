@@ -1,13 +1,14 @@
 from typing import Iterable
 from enum import IntEnum, auto
 
-class OpType:
+class OpType(IntEnum):
     add = auto()
     sub = auto()
     mul = auto()
     div = auto()
     parenl = auto()
     parenr = auto()
+    comma = auto()
 
 class Op:
     def __init__(self, optyp: OpType, precedence: int, form: str):
@@ -25,6 +26,7 @@ div = Op(OpType.div, 1, "/")
 mod = Op(OpType.div, 1, "%")
 parenl = Op(OpType.parenl, -1, "")
 parenr = Op(OpType.parenr, -1, "")
+comma = Op(OpType.comma, -1, ",")
 
 def is_empty(l: list | tuple | Iterable):
     return len(l) == 0
@@ -75,6 +77,9 @@ def infix_to_postfix(expr: str) -> str:
             stk.pop()
         elif i == "(":
             stk.append(parenl)
+        elif i == ',':
+            while not is_empty(stk) and not last_is_paren():
+                ret += f"{stk.pop()} "
         elif i.isnumeric():
             dot_used = False
             ret += i
